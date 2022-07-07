@@ -1,0 +1,13 @@
+name: VillaRegion
+version: '${project.version}'
+main: vicente.rocka.villaregion.VillaRegion
+api-version: 1.19
+authors: [ Vicente_Munoz_alias_Rocka ]
+description: Village region basic
+commands:
+  vregion:
+    description: A command for create regions
+    aliases:
+      - vrg
+  villa:
+    description: A command for create villas

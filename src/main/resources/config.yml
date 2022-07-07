@@ -1,0 +1,108 @@
+#This plugin is dedicated to Kira
+flags:
+  errors:
+    Interact: "No puedes interactuar aqui"
+    Build: "No puedes construir aqui"
+    Break: "No puedes romper aqui"
+    Damage: "No puedes hacer hacer daño aqui"
+    Use_bed: "No puedes dormir aqui"
+    Bucket: "No puedes usar este item aqui"
+    Not_Ignite: "No puedes prender fuergo aqui"
+villa_specification:
+  #set to false deactivates only regions with flag "is_village_zone: true"
+  protection: true
+  size_villa: 50
+  size_name: 12
+  max_villa_per_player: 2
+  overlapping_villa: false
+  title_to_enter: "&aHas entrado a"
+  title_to_exit: "&cHas salido de"
+  specification_by_perm:
+    #the priority has the last
+    villa_vip:
+      size_villa: 100
+      size_name: 12
+      max_villa_per_player: 3
+    #villa_mega_vip has priority because is the last
+    villa_mega_vip:
+      size_villa: 150
+      size_name: 15
+      max_villa_per_player: 5
+  default_flags_villa:
+    Not_Burn: true
+    Tpa_Resident: true
+    Tpa_All: false
+    Not_Explosion: true
+    Title: true
+    Use_Villagers: true
+commands:
+  vrg:
+    permission: "VillaRegion.VRegion"
+  villa:
+    create:
+      name: "crear"
+      description: "El comando para crear villa"
+      error:
+        name_usage: "El %name_usage% ya esta en uso"
+        size_name: "El nombre como maximo puede ser de %size_name%"
+        max_villa_per_player: "El maximo de villa es de %max_villa_per_player%, tu tienes %count_villa_player%"
+        overlapping_villa: "La zona esta colisionando con %overlapping_villa%"
+      success:
+        create_region: "La zona %create_region% se ha creado"
+    delete:
+      name: "borrar"
+      description: "El comando para borrar villas"
+      error:
+        not_found: "No tienes una villa de nombre %name_villa%"
+      success:
+        deleted: "La villa %name_villa% ha sido borrada"
+    config:
+      name: "configuracion"
+      description: "El comando para configurar la villa"
+      subcommands:
+        permission: "permisos"
+        spawn: "spawn"
+        name: "nombre"
+      error:
+        not_found_villa: "La villa no existe"
+        player_is_not_resident: "No eres parte de la villa"
+        player_doesnt_have_permission: "No tienes permisos para esa accion"
+        invalid_permission_name: "El permiso no existe"
+        option_not_valid: "Ingrese false, true o remove"
+        max_villa_per_player: "El jugador ya tiene demasiadas villas"
+      success:
+        change_spawn: "El spawn se ha cambiado"
+        change_name: "El nombre de la villa ha cambiado"
+        change_permission: "El permiso ha sido cambiado"
+
+    go:
+      name: "ir"
+      permission: "villa_teleport"
+      all_can_use: true
+      description: "El comando para hacer teleportacion a la villa"
+      error:
+        not_found_villa: "Villa no encontrada"
+        player_is_not_resident: "No eres parte de esa villa"
+        not_permission: "No tienes permisos para usar esto"
+        villa_dont_have_spawn: "La villa no tiene un spawn"
+      success:
+        done: "La teleportacion fue un exito"
+    add:
+      name: "agregar"
+      description: "El comando para agregar personas a las villas"
+      error:
+        not_found_player: "El jugador no fue encontrado"
+        not_found_villa: "No tienes los permisos para agregar jugadores a la Villa"
+        player_already_in_zone: "El juador ya esta en la Villa"
+      success:
+        added: "El jugador fue agreado"
+    remove:
+      name: "expulsar"
+      description: "El comando para expulsar personas a las villas"
+      error:
+        not_found_player: "El jugador no esta en la Villa"
+        not_found_villa: "No tienes los permisos para espulsar jugadores de la villa"
+        not_player_in_zone: "El jugador no esta en la villa"
+        can_not_remove_player_with_same_permission: "No puedes expulsar a un jugador con los mismo permisos o superiores"
+      success:
+        removed: "El jugador fue expulsado de la villa"
