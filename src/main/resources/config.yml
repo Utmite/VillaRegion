@@ -11,26 +11,27 @@ flags:
 villa_specification:
   #set to false deactivates only regions with flag "is_village_zone: true"
   protection: true
-  size_villa: 50
-  size_name: 12
-  max_villa_per_player: 2
+  size_villa: 250
+  size_name: 16
+  max_villa_per_player: 3
   overlapping_villa: false
   title_to_enter: "&aHas entrado a"
   title_to_exit: "&cHas salido de"
   specification_by_perm:
     #the priority has the last
     villa_vip:
-      size_villa: 100
-      size_name: 12
+      size_villa: 300
+      size_name: 17
       max_villa_per_player: 3
     #villa_mega_vip has priority because is the last
     villa_mega_vip:
-      size_villa: 150
-      size_name: 15
+      size_villa: 450
+      size_name: 18
       max_villa_per_player: 5
   default_flags_villa:
     Not_Burn: true
     Not_Explosion: true
+    Not_Natural_Ignite: true
     Title: true
     Use_Villagers: true
 commands:

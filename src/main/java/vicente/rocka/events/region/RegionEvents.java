@@ -208,51 +208,6 @@ public class RegionEvents implements Listener {
         return false;
     }
 
-    public boolean getCancelledResident(Player player, Location location, RegionFlag regionFlag){
-        if(player.isOp()) return false;
-
-        List<Zone> zones = Zone.getZoneByCords(location);
-
-        if(zones.isEmpty()) return false;
-
-        Zone zone = zones.get(zones.size() - 1);
-        if(!checkAllowProtection() && Boolean.parseBoolean(zone.getFlag().getFlag(RegionFlag.Is_Village_Zone))) return false;
-
-        if(!zone.getResident().contains(player.getUniqueId())) {
-            sendFlagError(player, regionFlag);
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean getInverseCancelled(Player player, Location location, RegionFlag regionFlag){
-
-        if(player.isOp()) return true;
-
-        List<Zone> zones = Zone.getZoneByCords(location);
-
-        if(zones.isEmpty()) return true;
-
-        Zone zone = zones.get(zones.size() - 1);
-        if(!checkAllowProtection() && Boolean.parseBoolean(zone.getFlag().getFlag(RegionFlag.Is_Village_Zone))) return true;
-
-        String value = zone.getFlag().getFlag(regionFlag);
-
-        if (value.equals("true")) return true;
-        if (value.equals("false")) {
-            sendFlagError(player, regionFlag);
-            return false;
-
-        }
-
-        if(!zone.getResident().contains(player.getUniqueId())) {
-            sendFlagError(player, regionFlag);
-            return false;
-        }
-
-        return true;
-    }
     private void sendFlagError(Player player, RegionFlag regionFlag){
 
         String error = Region.plugin.getConfig().getString("flags.errors."+regionFlag.name());
@@ -412,11 +367,11 @@ public class RegionEvents implements Listener {
 
     @EventHandler
     public void BlockIgniteEvent(BlockIgniteEvent blockIgniteEvent){
-        if(blockIgniteEvent.getPlayer() == null) blockIgniteEvent.setCancelled(getGameRule(blockIgniteEvent.getBlock().getLocation(), RegionFlag.Not_Ignite));
-        if(blockIgniteEvent.getPlayer() instanceof Player) blockIgniteEvent.setCancelled(getCancelledResident(
+        if(blockIgniteEvent.getPlayer() == null) blockIgniteEvent.setCancelled(getGameRule(blockIgniteEvent.getBlock().getLocation(), RegionFlag.Not_Natural_Ignite));
+        if(blockIgniteEvent.getPlayer() instanceof Player) blockIgniteEvent.setCancelled(getCancelled(
                 blockIgniteEvent.getPlayer(),
                 blockIgniteEvent.getBlock().getLocation(),
-                RegionFlag.Not_Ignite
+                RegionFlag.Not_Player_Ignite
         ));
     }
 
@@ -424,7 +379,7 @@ public class RegionEvents implements Listener {
     public void BlockCanBuildEvent(BlockCanBuildEvent blockCanBuildEvent){
         // not build: true --> false
 
-        boolean value = getInverseCancelled(
+        boolean value = !getCancelled(
                 blockCanBuildEvent.getPlayer(),
                 blockCanBuildEvent.getBlock().getLocation(),
                 RegionFlag.Build
