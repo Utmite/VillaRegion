@@ -80,9 +80,21 @@ public class VillaGo implements SubCommand {
             return;
         }
 
-        if(!villa.getResident().contains(player.getUniqueId()) && !player.isOp() && villa.getFlag().getFlag(RegionFlag.Tpa_All).equals("false")){
+        if(!villa.getResident().contains(player.getUniqueId()) && !player.isOp() &&
+                (villa.getFlag().getFlag(RegionFlag.Tpa_All).equals("false") || villa.getFlag().getFlag(RegionFlag.Tpa_All).equals("null"))){
             BaseComponent[] component = new ComponentBuilder(Region.plugin.getConfig()
                     .getString("commands.villa.go.error.player_is_not_resident"))
+                    .append("!")
+                    .color(ChatColor.RED)
+                    .create();
+
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
+            return;
+        }
+
+        if(villa.getFlag().getFlag(RegionFlag.Tpa_Resident).equals("false")){
+            BaseComponent[] component = new ComponentBuilder(Region.plugin.getConfig()
+                    .getString("commands.villa.go.error.villa_doesnt_have_tpa_resident"))
                     .append("!")
                     .color(ChatColor.RED)
                     .create();
@@ -130,8 +142,8 @@ public class VillaGo implements SubCommand {
                     Zone.getZoneList().forEach(e -> subArguments.add(e.getName()));
                     return subArguments;
                 }
-                Zone.getAllZonePlayerIsResident(player.getUniqueId()).forEach(e -> {
-                    if(e.getFlag().getFlag(RegionFlag.Tpa_Resident).equals("true")) subArguments.add(e.getName());
+                Zone.getAllZoneByFlag(RegionFlag.Tpa_Resident, "true", "null").forEach(e -> {
+                    if(e.getResident().contains(player.getUniqueId())) subArguments.add(e.getName());
                 });
                 Zone.getAllZoneByFlag(RegionFlag.Tpa_All, "true").forEach(e -> {
                     subArguments.add(e.getName());

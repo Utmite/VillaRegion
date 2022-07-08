@@ -20,7 +20,7 @@ public enum RegionFlag {
     Bucket,
     Use_Bed,
     Is_Village_Zone,
-    Use_Villagers,
+
     Title_Text;
 
     final public Object getType(){

@@ -62,14 +62,6 @@ public class Furlough {
         this.setPlayerFurLough(player.getUniqueId(), regionFurlough, value);
     }
 
-    public JSONObject getAllPlayerFurLough(Player player){
-        String uuidString = player.getUniqueId().toString();
-
-        if(furLough.get(uuidString) == null) return new JSONObject();
-
-        return (JSONObject) furLough.get(uuidString);
-
-    }
 
     public boolean getPlayerFurLough(UUID uuid, RegionFurlough regionFurlough){
         String uuidString = uuid.toString();

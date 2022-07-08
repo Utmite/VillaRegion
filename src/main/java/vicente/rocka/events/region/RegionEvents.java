@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import vicente.rocka.events.custom.PlayerEnterZoneEvent;
 import vicente.rocka.events.custom.PlayerExitZoneEvent;
+import vicente.rocka.region.Flag;
 import vicente.rocka.region.Region;
 import vicente.rocka.region.Zone;
 import vicente.rocka.util.enums.RegionFlag;
@@ -115,8 +116,16 @@ public class RegionEvents implements Listener {
         Player player = playerEnterZoneEvent.getPlayer();
         Zone zone = playerEnterZoneEvent.getZone();
 
-        if(zone.getFlag().getFlag(RegionFlag.Title) == null) return;
+        if(zone.getFlag().getFlag(RegionFlag.Title).equals("null")) return;
         if(zone.getFlag().getFlag(RegionFlag.Title).equals("true")){
+            Flag flag = zone.getFlag();
+            if(!flag.getFlag(RegionFlag.Title_Text).equals("null")){
+                player.sendTitle(ChatColor.translateAlternateColorCodes(
+                                '&', flag.getFlag(RegionFlag.Title_Text)),
+                        ChatColor.translateAlternateColorCodes('&', zone.getName())
+                        , 10, 30, 10);
+                return;
+            }
             player.sendTitle(ChatColor.translateAlternateColorCodes(
                             '&', title_to_enter),
                     ChatColor.translateAlternateColorCodes('&', zone.getName())
@@ -132,8 +141,17 @@ public class RegionEvents implements Listener {
         Player player = playerExitZoneEvent.getPlayer();
         Zone zone = playerExitZoneEvent.getZone();
 
-        if(zone.getFlag().getFlag(RegionFlag.Title) == null) return;
+        if(zone.getFlag().getFlag(RegionFlag.Title).equals("null")) return;
         if(zone.getFlag().getFlag(RegionFlag.Title).equals("true")) {
+            Flag flag = zone.getFlag();
+
+            if(!flag.getFlag(RegionFlag.Title_Text).equals("null")){
+                player.sendTitle(ChatColor.translateAlternateColorCodes(
+                                '&', flag.getFlag(RegionFlag.Title_Text)),
+                        ChatColor.translateAlternateColorCodes('&', zone.getName())
+                        , 10, 30, 10);
+                return;
+            }
             player.sendTitle(ChatColor.translateAlternateColorCodes(
                             '&', title_to_exit),
                     ChatColor.translateAlternateColorCodes('&', zone.getName())
@@ -176,13 +194,29 @@ public class RegionEvents implements Listener {
 
         String value = zone.getFlag().getFlag(regionFlag);
 
-        if(value != null) {
-            if (value.equals("true")) return false;
-            if (value.equals("false")) {
-                sendFlagError(player, regionFlag);
-                return true;
-            }
+        if (value.equals("true")) return false;
+        if (value.equals("false")) {
+            sendFlagError(player, regionFlag);
+            return true;
         }
+
+        if(!zone.getResident().contains(player.getUniqueId())) {
+            sendFlagError(player, regionFlag);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean getCancelledResident(Player player, Location location, RegionFlag regionFlag){
+        if(player.isOp()) return false;
+
+        List<Zone> zones = Zone.getZoneByCords(location);
+
+        if(zones.isEmpty()) return false;
+
+        Zone zone = zones.get(zones.size() - 1);
+        if(!checkAllowProtection() && Boolean.parseBoolean(zone.getFlag().getFlag(RegionFlag.Is_Village_Zone))) return false;
 
         if(!zone.getResident().contains(player.getUniqueId())) {
             sendFlagError(player, regionFlag);
@@ -205,12 +239,11 @@ public class RegionEvents implements Listener {
 
         String value = zone.getFlag().getFlag(regionFlag);
 
-        if(value != null) {
-            if (value.equals("true")) return true;
-            if (value.equals("false")) {
-                sendFlagError(player, regionFlag);
-                return false;
-            }
+        if (value.equals("true")) return true;
+        if (value.equals("false")) {
+            sendFlagError(player, regionFlag);
+            return false;
+
         }
 
         if(!zone.getResident().contains(player.getUniqueId())) {
@@ -249,9 +282,7 @@ public class RegionEvents implements Listener {
 
         String value = zone.getFlag().getFlag(regionFlag);
 
-        if(value != null){
-            if(value.equals("true")) return true;
-        }
+        if(value.equals("true")) return true;
 
         return false;
     }
@@ -382,7 +413,7 @@ public class RegionEvents implements Listener {
     @EventHandler
     public void BlockIgniteEvent(BlockIgniteEvent blockIgniteEvent){
         if(blockIgniteEvent.getPlayer() == null) blockIgniteEvent.setCancelled(getGameRule(blockIgniteEvent.getBlock().getLocation(), RegionFlag.Not_Ignite));
-        if(blockIgniteEvent.getPlayer() instanceof Player) blockIgniteEvent.setCancelled(getCancelled(
+        if(blockIgniteEvent.getPlayer() instanceof Player) blockIgniteEvent.setCancelled(getCancelledResident(
                 blockIgniteEvent.getPlayer(),
                 blockIgniteEvent.getBlock().getLocation(),
                 RegionFlag.Not_Ignite
@@ -412,6 +443,19 @@ public class RegionEvents implements Listener {
     public void InventoryOpenEvent(InventoryOpenEvent inventoryOpenEvent){
         inventoryOpenEvent.setCancelled(
                 getCancelled((Player) inventoryOpenEvent.getPlayer(), inventoryOpenEvent.getInventory().getLocation(), RegionFlag.Interact)
+        );
+    }
+
+    @EventHandler
+    public void PlayerCommandSendEvent(PlayerCommandSendEvent playerCommandSendEvent){
+        if(playerCommandSendEvent.getPlayer().isOp()) return;
+        if(Region.plugin.getConfig().getBoolean(
+                "tab.allow_tab_commands"
+        )) return;
+
+        playerCommandSendEvent.getCommands().clear();
+        playerCommandSendEvent.getCommands().addAll(
+                Region.plugin.getConfig().getStringList("tab.allow_commands")
         );
     }
 

@@ -46,11 +46,15 @@ public class Flag {
     }
 
     public String getFlag(RegionFlag regionFlag){
-        if(!flag.has(String.valueOf(regionFlag))) return null;
+        if(!flag.has(String.valueOf(regionFlag))) return "null";
         return flag.get(String.valueOf(regionFlag)).toString();
     }
 
     public JSONObject getAll(){
         return this.flag;
+    }
+
+    public boolean equalsNUllorFalse(String string){
+        return (string.equals("false") || string.equals("null"));
     }
 }

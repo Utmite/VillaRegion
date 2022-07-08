@@ -30,8 +30,6 @@ villa_specification:
       max_villa_per_player: 5
   default_flags_villa:
     Not_Burn: true
-    Tpa_Resident: true
-    Tpa_All: false
     Not_Explosion: true
     Title: true
     Use_Villagers: true
@@ -85,6 +83,7 @@ commands:
         player_is_not_resident: "No eres parte de esa villa"
         not_permission: "No tienes permisos para usar esto"
         villa_dont_have_spawn: "La villa no tiene un spawn"
+        villa_doesnt_have_tpa_resident: "La villa no tiene esta capacidad"
       success:
         done: "La teleportacion fue un exito"
     add:
@@ -106,3 +105,9 @@ commands:
         can_not_remove_player_with_same_permission: "No puedes expulsar a un jugador con los mismo permisos o superiores"
       success:
         removed: "El jugador fue expulsado de la villa"
+tab:
+  allow_tab_commands: true
+  allow_commands:
+    - villa
+    - tps
+    - tpa

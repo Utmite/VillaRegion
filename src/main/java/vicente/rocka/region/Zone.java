@@ -68,6 +68,18 @@ public class Zone extends RegionWithPlayer{
         return zones;
     }
 
+    public static List<Zone> getAllZoneByFlag(RegionFlag regionFlag, String value, String value2){
+        List<Zone> zones = new ArrayList<>();
+
+        Zone.ZONE_LIST.forEach(e -> {
+            if(e.getFlag().getFlag(regionFlag).equals(value)) zones.add(e);
+            if(e.getFlag().getFlag(regionFlag).equals(value2)) zones.add(e);
+
+        });
+
+        return zones;
+    }
+
     public static List<Zone> getZonePlayerFurlough(UUID uuid, RegionFurlough regionFurlough){
         List<Zone> zones = new ArrayList<>();
 
