@@ -35,16 +35,6 @@ public class CommandVregion implements TabExecutor, MainCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        String permission_cmd = Region.plugin.getConfig().getString("commands.vrg.permission");
-
-        if(!sender.hasPermission(permission_cmd)) {
-            sender.sendMessage("You dont have permission!");
-            if(sender instanceof Player){
-                Player player = (Player) sender;
-                player.kickPlayer(ChatColor.RED+"You dont have permission!");
-            }
-            return false;
-        }
 
         if(args.length == 0) {
             this.getUsageCommand(sender, args);

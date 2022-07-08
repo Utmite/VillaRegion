@@ -2,12 +2,13 @@ name: VillaRegion
 version: '${project.version}'
 main: vicente.rocka.villaregion.VillaRegion
 api-version: 1.19
-authors: [ Vicente_Munoz_alias_Rocka ]
+authors: [ Vicente_Munoz_alias_Rockimunoz74 ]
 description: Village region basic
 commands:
   vregion:
     description: A command for create regions
     aliases:
       - vrg
+    permission: villaregion.commands.vregion
   villa:
     description: A command for create villas

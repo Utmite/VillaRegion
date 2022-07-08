@@ -369,7 +369,10 @@ public class RegionEvents implements Listener {
 
     @EventHandler
     public void BlockIgniteEvent(BlockIgniteEvent blockIgniteEvent){
+        //This is a game rule
         if(blockIgniteEvent.getPlayer() == null) blockIgniteEvent.setCancelled(getGameRule(blockIgniteEvent.getBlock().getLocation(), RegionFlag.Not_Natural_Ignite));
+
+        //This is a rule for Residents
         if(blockIgniteEvent.getPlayer() instanceof Player) blockIgniteEvent.setCancelled(getCancelled(
                 blockIgniteEvent.getPlayer(),
                 blockIgniteEvent.getBlock().getLocation(),
