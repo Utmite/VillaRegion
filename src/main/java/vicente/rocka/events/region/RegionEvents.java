@@ -362,6 +362,8 @@ public class RegionEvents implements Listener {
 
     @EventHandler
     public void BlockBurnEvent(BlockBurnEvent blockBurnEvent){
+        //Not_burn --> true el evento no debe cancelarse
+        //
         blockBurnEvent.setCancelled(getGameRule(blockBurnEvent.getBlock().getLocation(), RegionFlag.Not_Burn));
     }
 
@@ -371,7 +373,7 @@ public class RegionEvents implements Listener {
         if(blockIgniteEvent.getPlayer() instanceof Player) blockIgniteEvent.setCancelled(getCancelled(
                 blockIgniteEvent.getPlayer(),
                 blockIgniteEvent.getBlock().getLocation(),
-                RegionFlag.Not_Player_Ignite
+                RegionFlag.Player_Ignite
         ));
     }
 
