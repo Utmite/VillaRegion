@@ -20,11 +20,13 @@ villa_specification:
   specification_by_perm:
     #the priority has the last
     villa_vip:
+      permission: "villaregion.feature.vip"
       size_villa: 300
       size_name: 17
       max_villa_per_player: 3
     #villa_mega_vip has priority because is the last
     villa_mega_vip:
+      permission: "villaregion.feature.megavip"
       size_villa: 450
       size_name: 18
       max_villa_per_player: 5
@@ -34,8 +36,6 @@ villa_specification:
     Not_Natural_Ignite: true
     Title: true
 commands:
-  vrg:
-    permission: "VillaRegion.VRegion"
   villa:
     create:
       name: "crear"

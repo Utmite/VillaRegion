@@ -1,5 +1,7 @@
 package vicente.rocka.region;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import vicente.rocka.util.enums.RegionFlag;
@@ -16,7 +18,12 @@ public class Villa extends Zone{
 
         for(String key : default_flags_villa.getKeys(false)){
             String value = Region.plugin.getConfig().getString("villa_specification.default_flags_villa."+key);
-            this.getFlag().setFlag(RegionFlag.valueOf(key), value);
+            try{
+                RegionFlag regionFlag = RegionFlag.valueOf(key);
+                this.getFlag().setFlag(regionFlag, value);
+            }catch (IllegalArgumentException illegalArgumentException){
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"[VillageRegion] This flag in default_flags_villa (config) not exits");
+            }
         }
     }
 }

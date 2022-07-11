@@ -60,13 +60,15 @@ public class VillaCreate implements SubCommand {
         int size_name = Region.plugin.getConfig().getInt("villa_specification.size_name");
         int max_villa_per_player = Region.plugin.getConfig().getInt("villa_specification.max_villa_per_player");
 
-        Set<String> specification_by_perm = Region.plugin.getConfig().getConfigurationSection("villa_specification.specification_by_perm").getKeys(false);
+        Set<String> classifications = Region.plugin.getConfig().getConfigurationSection("villa_specification.specification_by_perm").getKeys(false);
 
-        for(String perm : specification_by_perm){
-            if(player.hasPermission(perm)){
-                size_villa = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+perm+".size_villa");
-                size_name = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+perm+".size_name");
-                max_villa_per_player = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+perm+".max_villa_per_player");
+        for(String classification : classifications){
+            String permission = Region.plugin.getConfig().getString(
+                    "villa_specification.specification_by_perm."+classification+".permission");
+            if(player.hasPermission(permission)){
+                size_villa = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+classification+".size_villa");
+                size_name = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+classification+".size_name");
+                max_villa_per_player = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+classification+".max_villa_per_player");
             }
         }
 

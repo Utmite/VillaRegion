@@ -22,20 +22,20 @@ public class JSONFile {
      * @param name El nombre del archivo
      */
     private static void createJSONFile(String name) {
-        File f = new File(plugin.getDataFolder(),name+".json");
-        if(!f.exists()) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"[INFO] Creando "+name+".json");
-            JSONArray myObj = new JSONArray();
-            try(FileWriter file = new FileWriter(plugin.getDataFolder().getPath()+"/"+name+".json")) {
+        File file = new File(plugin.getDataFolder(),name+".json");
 
-                file.write(myObj.toString());
+        if(file.exists()) return;
 
-            } catch (IOException e) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"[ERROR] Error al crear "+name+".json");
-            }
-            return;
+        JSONArray myObj = new JSONArray();
+
+        try(FileWriter fileCreation = new FileWriter(plugin.getDataFolder().getPath()+"/"+name+".json")) {
+
+            fileCreation.write(myObj.toString());
+
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"[VillageRegion / ERROR] The plugin cannot create "+name+".json file");
         }
-        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW+"[INFO] El archivo "+name+".json ya existe!");
+
 
     }
 
@@ -51,7 +51,7 @@ public class JSONFile {
 
         String sourceName = plugin.getDataFolder().getPath()+"/"+name+".json";
 
-        try(BufferedReader reader = new BufferedReader(new FileReader(new File(sourceName)));) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(sourceName))) {
 
             String content = reader.lines().collect(Collectors.joining(System.lineSeparator()));
 
