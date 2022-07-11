@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.json.JSONObject;
 import vicente.rocka.region.*;
 import vicente.rocka.util.command.SubCommand;
@@ -63,8 +64,9 @@ public class VillaCreate implements SubCommand {
         Set<String> classifications = Region.plugin.getConfig().getConfigurationSection("villa_specification.specification_by_perm").getKeys(false);
 
         for(String classification : classifications){
-            String permission = Region.plugin.getConfig().getString(
-                    "villa_specification.specification_by_perm."+classification+".permission");
+
+            Permission permission = new Permission(Region.plugin.getConfig().getString("villa_specification.specification_by_perm."+classification+".permission"));
+
             if(player.hasPermission(permission)){
                 size_villa = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+classification+".size_villa");
                 size_name = Region.plugin.getConfig().getInt("villa_specification.specification_by_perm."+classification+".size_name");

@@ -7,7 +7,7 @@ flags:
     Damage: "No puedes hacer hacer daño aqui"
     Use_bed: "No puedes dormir aqui"
     Bucket: "No puedes usar este item aqui"
-    Not_Ignite: "No puedes prender fuergo aqui"
+    Player_Ignite: "No puedes prender fuergo aqui"
 villa_specification:
   #set to false deactivates only regions with flag "is_village_zone: true"
   protection: true
@@ -72,10 +72,9 @@ commands:
         change_spawn: "El spawn se ha cambiado"
         change_name: "El nombre de la villa ha cambiado"
         change_permission: "El permiso ha sido cambiado"
-
     go:
       name: "ir"
-      permission: "villa_teleport"
+      permission: "villa.commands.teleport"
       all_can_use: true
       description: "El comando para hacer teleportacion a la villa"
       error:
