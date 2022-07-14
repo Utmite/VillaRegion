@@ -286,9 +286,10 @@ public class VillaConfig implements SubCommand {
 
         switch (args.length){
             case 2:
-                Zone.getAllZonePlayerIsResident(player.getUniqueId()).forEach(e -> {
-                    subArguments.add(e.getName());
-                });
+                Zone.getAllZonePlayerIsResident(player.getUniqueId()).stream()
+                        .map(e -> e.getName())
+                        .filter(e -> e.toUpperCase().startsWith(args[1].toUpperCase()))
+                        .forEach(e -> subArguments.add(e));
                 break;
             case 3:
 

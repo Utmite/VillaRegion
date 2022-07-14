@@ -56,7 +56,12 @@ public class VregionDelete implements SubCommand {
         switch (args.length){
             case 2:
                 subcommandArguments.add("all");
-                subcommandArguments.addAll(Zone.getAllName());
+
+                Zone.getAllName()
+                        .stream()
+                        .filter(e -> e.toUpperCase().startsWith(args[1].toUpperCase()))
+                        .forEach(e -> subcommandArguments.add(e));
+
                 break;
         }
 

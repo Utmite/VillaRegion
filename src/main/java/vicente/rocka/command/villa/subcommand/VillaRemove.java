@@ -134,6 +134,7 @@ public class VillaRemove implements SubCommand {
                 Zone.getZonePlayerFurlough(player.getUniqueId(), new RegionFurlough[]{RegionFurlough.Owner, RegionFurlough.Kick})
                         .stream()
                         .map(e -> e.getName())
+                        .filter(e -> e.toUpperCase().startsWith(args[1].toUpperCase()))
                         .forEach(e -> subArguments.add(e));
                 break;
             case 3:

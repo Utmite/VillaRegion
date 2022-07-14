@@ -92,6 +92,7 @@ public class VillaDelete implements SubCommand {
                 Zone.getZonePlayerFurlough(player.getUniqueId(), RegionFurlough.Owner)
                         .stream()
                         .map(e -> e.getName())
+                        .filter(e -> e.toUpperCase().startsWith(args[1].toUpperCase()))
                         .forEach(e -> subArguments.add(e));
 
         }

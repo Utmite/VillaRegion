@@ -108,7 +108,11 @@ public class VregionData implements SubCommand {
             case 3:
                 subcommandArguments.clear();
                 if (args[1].equalsIgnoreCase("get")) subcommandArguments.add("all");
-                subcommandArguments.addAll(Zone.getAllName());
+
+                Zone.getAllName()
+                        .stream()
+                        .filter(e -> e.toUpperCase().startsWith(args[2].toUpperCase()))
+                        .forEach(e -> subcommandArguments.add(e));
                 break;
             case 4:
                 subcommandArguments.clear();
@@ -134,7 +138,7 @@ public class VregionData implements SubCommand {
                 }
                 if (args[1].equalsIgnoreCase("modify") && args[3].equalsIgnoreCase("flag")) {
                     for (RegionFlag regionFlag : RegionFlag.values()) {
-                        subcommandArguments.add(String.valueOf(regionFlag));
+                        if(regionFlag.name().toUpperCase().startsWith(args[4].toUpperCase())) subcommandArguments.add(regionFlag.name());
                     }
                 }
                 if (args[1].equalsIgnoreCase("modify") && args[3].equalsIgnoreCase("furlough")) {
@@ -352,7 +356,10 @@ public class VregionData implements SubCommand {
 
     private void performSubcommandGetNameZonePlayer(Player player, String[] args){
         Zone zone = Zone.getZoneByName(args[2]);
-
+        if(zone == null){
+            player.sendMessage(ChatColor.RED + "The zone not exits");
+            return;
+        }
         Set<String> keys = zone.getJSON().keySet();
 
         if(args.length == 4 && keys.contains(args[3])){
@@ -432,7 +439,10 @@ public class VregionData implements SubCommand {
 
     private void performSubcommandGetNameZoneCmd(CommandSender sender, String[] args){
         Zone zone = Zone.getZoneByName(args[2]);
-
+        if(zone == null){
+            sender.sendMessage(ChatColor.RED + "The zone not exits");
+            return;
+        }
         Set<String> keys = zone.getJSON().keySet();
 
         if(args.length == 4 && keys.contains(args[3])){
@@ -454,7 +464,10 @@ public class VregionData implements SubCommand {
 
         RegionFlag regionFlag = RegionFlag.valueOf(args[4]);
         Zone zone = Zone.getZoneByName(args[2]);
-
+        if(zone == null){
+            sender.sendMessage(ChatColor.RED + "The zone not exits");
+            return;
+        }
         if (regionFlag.getType() instanceof Boolean && args.length == 6) {
             // /vrg data modify <name> flag <flag> <value>
             // / -1  0   1      2      3    4      5
@@ -507,6 +520,10 @@ public class VregionData implements SubCommand {
 
         RegionFurlough regionFurlough = RegionFurlough.valueOf(args[4]);
         Zone zone = Zone.getZoneByName(args[2]);
+        if(zone == null){
+            sender.sendMessage(ChatColor.RED + "The zone not exits");
+            return;
+        }
         OfflinePlayer target = null;
 
         for(UUID uuid : zone.getResident().getAll()){
@@ -543,7 +560,10 @@ public class VregionData implements SubCommand {
 
         Zone zone = Zone.getZoneByName(args[2]);
 
-
+        if(zone == null){
+            sender.sendMessage(ChatColor.RED + "The zone not exits");
+            return;
+        }
         if(args[4].equalsIgnoreCase("add")){
             Player target = Region.plugin.getServer().getPlayerExact(args[5]);
             if(target == null){
@@ -589,6 +609,12 @@ public class VregionData implements SubCommand {
 
         RegionProperties regionProperties = RegionProperties.valueOf(args[4]);
         Zone zone = Zone.getZoneByName(args[2]);
+
+        if(zone == null){
+            sender.sendMessage(ChatColor.RED + "The zone not exits");
+            return;
+        }
+
         JSONObject jsonObject = zone.getJsonObjectProperties();
 
         if(regionProperties.getType() instanceof Integer){

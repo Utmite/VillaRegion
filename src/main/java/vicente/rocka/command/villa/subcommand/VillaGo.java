@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -139,14 +140,17 @@ public class VillaGo implements SubCommand {
         switch (args.length){
             case 2:
                 if(player.isOp()){
-                    Zone.getZoneList().forEach(e -> subArguments.add(e.getName()));
+                    Zone.getZoneList().forEach(e -> {
+                        if(e.getName().toUpperCase().startsWith(args[1].toUpperCase())) subArguments.add(e.getName());
+                    });
                     return subArguments;
                 }
+
                 Zone.getAllZoneByFlag(RegionFlag.Tpa_Resident, "true", "null").forEach(e -> {
-                    if(e.getResident().contains(player.getUniqueId())) subArguments.add(e.getName());
+                    if(e.getResident().contains(player.getUniqueId()) && e.getName().toUpperCase().startsWith(args[1].toUpperCase())) subArguments.add(e.getName());
                 });
                 Zone.getAllZoneByFlag(RegionFlag.Tpa_All, "true").forEach(e -> {
-                    subArguments.add(e.getName());
+                    if(e.getName().toUpperCase().startsWith(args[1].toUpperCase())) subArguments.add(e.getName());
                 });
         }
         return subArguments;
