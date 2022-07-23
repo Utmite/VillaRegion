@@ -34,6 +34,9 @@ public class CommandBuy implements TabExecutor {
         Merchant merchant = Bukkit.createMerchant("Comerciante proletario");
         Player player = (Player) sender;
 
+        merchantRecipes.add(getBankNote());
+        aux_merchantRecipes.add(getBankNote());
+
         for (Object object : VillaRegion.SHOP.getJson()) {
             if (!(object instanceof JSONObject)) continue;
 
@@ -56,8 +59,9 @@ public class CommandBuy implements TabExecutor {
             aux_merchantRecipes.add(getNewRecipe(item, jsonObject_price_item.getInt("price")));
         }
 
+
         merchant.setRecipes(merchantRecipes);
-        ShopEvents.getGlobalMerchants().put(merchant, aux_merchantRecipes);
+        ShopEvents.global_merchants.put(merchant, aux_merchantRecipes);
 
         player.openMerchant(merchant, true);
 
@@ -72,24 +76,46 @@ public class CommandBuy implements TabExecutor {
         return intgetPrice(price, recipe);
     }
 
+    private MerchantRecipe getBankNote(){
+        ItemStack bankNote = new ItemStack(Material.GOLD_NUGGET, 1);
+
+        ItemMeta bankNoteMeta = bankNote.getItemMeta();
+        bankNoteMeta.setCustomModelData(7007449);
+        bankNote.setItemMeta(bankNoteMeta);
+
+        MerchantRecipe bankNoteRecipe = new MerchantRecipe(bankNote, 99);
+
+        ItemStack coin = new ItemStack(Material.GOLD_NUGGET, 64);
+
+        ItemMeta coinMeta = coin.getItemMeta();
+        coinMeta.setCustomModelData(7007447);
+        coin.setItemMeta(coinMeta);
+
+        bankNoteRecipe.addIngredient(coin);
+
+        return bankNoteRecipe;
+    }
     private MerchantRecipe intgetPrice(int price, MerchantRecipe recipe){
 
             int mainPrice = price / 64;
             int r = price % 64;
 
-            ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
+            if(mainPrice != 0) {
+                ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
 
-            ItemMeta itemMeta = notebank.getItemMeta();
-            itemMeta.setCustomModelData(7007449);
-            notebank.setItemMeta(itemMeta);
+                ItemMeta itemMeta = notebank.getItemMeta();
+                itemMeta.setCustomModelData(7007449);
+                notebank.setItemMeta(itemMeta);
 
+                recipe.addIngredient(notebank);
+            }
             ItemStack coin = new ItemStack(Material.GOLD_NUGGET, r);
 
             ItemMeta coinMeta = coin.getItemMeta();
             coinMeta.setCustomModelData(7007447);
             coin.setItemMeta(coinMeta);
 
-            recipe.addIngredient(notebank);
+
             recipe.addIngredient(coin);
 
             return recipe;

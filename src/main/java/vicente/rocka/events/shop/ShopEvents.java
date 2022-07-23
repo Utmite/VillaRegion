@@ -6,15 +6,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import vicente.rocka.command.shop.CommandBuy;
 import vicente.rocka.events.custom.PlayerCloseMerchantEvent;
 import vicente.rocka.events.custom.PlayerSellItem;
 import vicente.rocka.events.custom.VillagerSellEvent;
+import vicente.rocka.region.Region;
 import vicente.rocka.villaregion.VillaRegion;
 
 import java.util.*;
@@ -23,56 +26,53 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShopEvents implements Listener {
 
-    private static HashMap<Merchant, List<MerchantRecipe>> global_merchants = new HashMap<>();
+    public static HashMap<Merchant, List<MerchantRecipe>> global_merchants = new HashMap<>();
 
     private static List<Player> playerInShop = new ArrayList();
     private static HashSet<Merchant> merchantsTrading = new HashSet<>();
     private static boolean go = false;
 
-    public static HashMap<Merchant, List<MerchantRecipe>> getGlobalMerchants(){
-        return global_merchants;
-    }
     public static void generatedVillagerSellEvent(){
         if(global_merchants.isEmpty()) return;
 
-            Set<Merchant> merchantSet = new HashSet<>();
-            merchantSet.addAll(global_merchants.keySet());
-            playerInShop.clear();
+        Set<Merchant> merchantSet = new HashSet<>();
+        merchantSet.addAll(global_merchants.keySet());
+        playerInShop.clear();
 
-            for (Merchant merchant :  merchantSet) {
-                if (!merchant.isTrading()) continue;
-                if (merchant.getRecipes().isEmpty()) continue;
-                if (!(merchant.getTrader() instanceof Player)) continue;
+        for (Merchant merchant :  merchantSet) {
+            if (!merchant.isTrading()) continue;
+            if (merchant.getRecipes().isEmpty()) continue;
+            if (!(merchant.getTrader() instanceof Player)) continue;
 
-                playerInShop.add((Player) merchant.getTrader());
-                AtomicInteger index = new AtomicInteger();
+            playerInShop.add((Player) merchant.getTrader());
+            AtomicInteger index = new AtomicInteger();
 
-                global_merchants.get(merchant).forEach(auxrecipe -> {
+            global_merchants.get(merchant).forEach(auxrecipe -> {
 
-                    MerchantRecipe recipe = merchant.getRecipe(index.get());
+                MerchantRecipe recipe = merchant.getRecipe(index.get());
 
-                    if (auxrecipe.getUses() != recipe.getUses() && !go) {
-                        go = true;
-                        VillagerSellEvent villagerSellEvent = new VillagerSellEvent((Player) merchant.getTrader(), merchant, recipe);
-                        Bukkit.getServer().getPluginManager().callEvent(villagerSellEvent);
-                    }
-
-                    index.addAndGet(1);
-
-                });
-            }
-
-            if(go){
-                go = false;
-                global_merchants.clear();
-
-                for(Player p : playerInShop){
-                    p.closeInventory();
-                    p.chat("/compro");
+                if (auxrecipe.getUses() != recipe.getUses() && !go) {
+                    go = true;
+                    VillagerSellEvent villagerSellEvent = new VillagerSellEvent((Player) merchant.getTrader(), merchant, recipe);
+                    Bukkit.getServer().getPluginManager().callEvent(villagerSellEvent);
                 }
 
-                playerInShop.clear();
+                index.addAndGet(1);
+
+            });
+        }
+
+        if(go){
+            go = false;
+            global_merchants.clear();
+
+            for(Player p : playerInShop){
+                p.closeInventory();
+                p.chat("/compro");
             }
+
+            playerInShop.clear();
+        }
 
     }
 
@@ -106,7 +106,7 @@ public class ShopEvents implements Listener {
 
         JSONObject itemJSON = this.removeItem(itemSell);
 
-        giveMoney(itemJSON);
+        if(itemJSON != null) giveMoney(itemJSON);
 
     }
 
@@ -125,7 +125,6 @@ public class ShopEvents implements Listener {
         player.getInventory().setItemInMainHand(null);
 
         addItemShop(player, itemSell, price);
-
 
         reloadShop();
     }
@@ -220,20 +219,80 @@ public class ShopEvents implements Listener {
             VillaRegion.BANK.getJson().put(bank);
             VillaRegion.BANK.saveJson();
         }else {
-            ItemStack price_value = new ItemStack(Material.GOLD_NUGGET, itemJSON.getInt("price"));
-
-            ItemMeta itemMeta = price_value.getItemMeta();
-            itemMeta.setCustomModelData(7007447);
-            price_value.setItemMeta(itemMeta);
 
             Player player = Bukkit.getPlayer(UUID.fromString(itemJSON.getString("player_UUID")));
 
-            player.getWorld().dropItem(player.getLocation(),price_value);
+            int price = itemJSON.getInt("price");
+
+            int mainPrice = price / 64;
+            int r = price % 64;
+
+            if(mainPrice != 0) {
+                ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
+
+                ItemMeta itemMeta = notebank.getItemMeta();
+                itemMeta.setCustomModelData(7007449);
+                notebank.setItemMeta(itemMeta);
+
+                player.getWorld().dropItem(player.getLocation(),notebank);
+            }
+
+            ItemStack coin = new ItemStack(Material.GOLD_NUGGET, r);
+
+            ItemMeta coinMeta = coin.getItemMeta();
+            coinMeta.setCustomModelData(7007447);
+            coin.setItemMeta(coinMeta);
 
 
+            player.getWorld().dropItem(player.getLocation(),coin);
         }
 
         VillaRegion.SHOP.saveJson();
+    }
+
+    @EventHandler
+    public void PlayerJoinEvent(PlayerJoinEvent playerJoinEvent){
+        Player player = playerJoinEvent.getPlayer();
+        int index = 0;
+        JSONArray jsonArray = new JSONArray().putAll(VillaRegion.BANK.getJson());
+
+        for(Object obj : jsonArray){
+            if(!(obj instanceof JSONObject)) continue;
+
+            JSONObject itemSell = (JSONObject) obj;
+            UUID playerUUID = UUID.fromString(itemSell.getString("UUID"));
+
+            if(!player.getUniqueId().equals(playerUUID)) continue;
+
+            VillaRegion.BANK.getJson().remove(index);
+            VillaRegion.BANK.saveJson();
+
+            int price = itemSell.getInt("price");
+
+            int mainPrice = price / 64;
+            int r = price % 64;
+
+            if(mainPrice != 0) {
+                ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
+
+                ItemMeta itemMeta = notebank.getItemMeta();
+                itemMeta.setCustomModelData(7007449);
+                notebank.setItemMeta(itemMeta);
+
+                player.getWorld().dropItem(player.getLocation(),notebank);
+            }
+
+            ItemStack coin = new ItemStack(Material.GOLD_NUGGET, r);
+
+            ItemMeta coinMeta = coin.getItemMeta();
+            coinMeta.setCustomModelData(7007447);
+            coin.setItemMeta(coinMeta);
+
+
+            player.getWorld().dropItem(player.getLocation(),coin);
+
+            index+=1;
+        }
     }
 
 

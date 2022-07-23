@@ -63,6 +63,7 @@ public final class VillaRegion extends JavaPlugin {
         VillaRegion.REGIONS = new JSONFile("regions");
         VillaRegion.SHOP = new JSONFile("shop");
         VillaRegion.BANK = new JSONFile("bank");
+
         Zone.LOAD_ZONE_LIST();
     }
 }

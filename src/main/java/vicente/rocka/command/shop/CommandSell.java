@@ -63,8 +63,8 @@ public class CommandSell implements TabExecutor {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
             return false;
         }
-
-        if(Integer.valueOf(args[0]) >= 4160){
+        int price = Integer.valueOf(args[0]);
+        if(price >= 4160 || price == 0){
             String error = Region.plugin.getConfig().getString("shop.error.not_safe_number");
 
             BaseComponent[] component = new ComponentBuilder(ChatColor.RED+error).create();

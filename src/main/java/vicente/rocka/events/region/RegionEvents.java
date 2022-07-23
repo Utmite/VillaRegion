@@ -46,6 +46,7 @@ public class RegionEvents implements Listener {
 
             ShopEvents.generatedVillagerSellEvent();
             ShopEvents.generatedVillagerCloseEvent();
+
             tick+=1;
         }, 0, 1);
     }
