@@ -18,13 +18,19 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantRecipe;
+import vicente.rocka.command.shop.CommandBuy;
 import vicente.rocka.events.custom.PlayerEnterZoneEvent;
 import vicente.rocka.events.custom.PlayerExitZoneEvent;
+import vicente.rocka.events.custom.VillagerSellEvent;
+import vicente.rocka.events.shop.ShopEvents;
 import vicente.rocka.region.Flag;
 import vicente.rocka.region.Region;
 import vicente.rocka.region.Zone;
 import vicente.rocka.util.enums.RegionFlag;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -36,16 +42,19 @@ public class RegionEvents implements Listener {
 
     public RegionEvents(){
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Region.plugin, () -> {
-                tick+=5;
-                if(tick % 21 == 0) tick = 0;
-        }, 0, 5);
+            if(tick % 21 == 0) tick = 0;
+
+            ShopEvents.generatedVillagerSellEvent();
+            ShopEvents.generatedVillagerCloseEvent();
+            tick+=1;
+        }, 0, 1);
     }
+
 
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent playerLoginEvent){
         Player player = playerLoginEvent.getPlayer();
-        List<Zone> now_zones = Zone.getZoneByCords(player.getLocation());
-
+        List<Zone> now_zones = new ArrayList<>();
         LAST_ZONES.put(player, now_zones);
 
     }
@@ -165,6 +174,7 @@ public class RegionEvents implements Listener {
         List<Zone> zones = LAST_ZONES.get(player);
         Set<Player> recipients = asyncPlayerChatEvent.getRecipients();
 
+        if(zones == null) return;
         if(zones.isEmpty()) return;
         if(message.startsWith("!")) return;
 
@@ -400,6 +410,8 @@ public class RegionEvents implements Listener {
 
     @EventHandler
     public void InventoryOpenEvent(InventoryOpenEvent inventoryOpenEvent){
+        if(inventoryOpenEvent.getInventory().getLocation() == null) return;
+
         inventoryOpenEvent.setCancelled(
                 getCancelled((Player) inventoryOpenEvent.getPlayer(), inventoryOpenEvent.getInventory().getLocation(), RegionFlag.Interact)
         );

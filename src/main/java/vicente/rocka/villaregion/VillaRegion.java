@@ -4,11 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.common.returnsreceiver.qual.This;
-import org.json.JSONObject;
+
+import vicente.rocka.command.shop.CommandBuy;
+import vicente.rocka.command.shop.CommandSell;
 import vicente.rocka.command.villa.CommandVilla;
 import vicente.rocka.command.vregion.CommandVregion;
 import vicente.rocka.events.region.RegionEvents;
+import vicente.rocka.events.shop.ShopEvents;
 import vicente.rocka.region.Region;
 import vicente.rocka.region.Zone;
 import vicente.rocka.util.JSONFile;
@@ -18,7 +20,8 @@ import java.io.File;
 public final class VillaRegion extends JavaPlugin {
 
     public static JSONFile REGIONS;
-
+    public static JSONFile SHOP;
+    public static JSONFile BANK;
     @Override
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"[VillageRegion]"+ChatColor.AQUA+" Plugin has started");
@@ -36,11 +39,14 @@ public final class VillaRegion extends JavaPlugin {
     public void registerCommands(){
         this.getCommand("vregion").setExecutor(new CommandVregion());
         this.getCommand("villa").setExecutor(new CommandVilla());
+        this.getCommand("vendo").setExecutor(new CommandSell());
+        this.getCommand("compro").setExecutor(new CommandBuy());
     }
 
     public void registerEvents(){
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new RegionEvents(), this);
+        pluginManager.registerEvents(new ShopEvents(), this);
     }
 
     public void createFile() {
@@ -55,8 +61,8 @@ public final class VillaRegion extends JavaPlugin {
         Region.plugin = this;
 
         VillaRegion.REGIONS = new JSONFile("regions");
-
-
+        VillaRegion.SHOP = new JSONFile("shop");
+        VillaRegion.BANK = new JSONFile("bank");
         Zone.LOAD_ZONE_LIST();
     }
 }

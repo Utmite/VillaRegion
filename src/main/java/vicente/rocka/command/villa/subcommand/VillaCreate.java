@@ -99,7 +99,7 @@ public class VillaCreate implements SubCommand {
             return;
         }
 
-        int count_villa_player = Zone.numberZoneFurloughPlayer(player.getUniqueId(), RegionFurlough.Owner);
+        int count_villa_player = Zone.getNumberZoneFurloughPlayer(player.getUniqueId(), RegionFurlough.Owner);
 
         if(count_villa_player >= max_villa_per_player){
             BaseComponent[] component = new ComponentBuilder(

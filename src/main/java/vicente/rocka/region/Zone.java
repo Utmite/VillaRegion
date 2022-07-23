@@ -27,7 +27,7 @@ public class Zone extends RegionWithPlayer{
     public static Hashtable<Integer, List<Zone>> getHashTable() {
         return Zone.HASH_TABLE;
     }
-    public static int numberZoneFurloughPlayer(UUID uuid, RegionFurlough regionFurlough){
+    public static int getNumberZoneFurloughPlayer(UUID uuid, RegionFurlough regionFurlough){
         AtomicInteger count = new AtomicInteger();
         Zone.ZONE_LIST.forEach(e -> {
             if(e.getFurlough().getPlayerFurLough(uuid, regionFurlough) == true) count.getAndIncrement();
@@ -80,7 +80,7 @@ public class Zone extends RegionWithPlayer{
         return zones;
     }
 
-    public static List<Zone> getZonePlayerFurlough(UUID uuid, RegionFurlough regionFurlough){
+    public static List<Zone> getZonePlayerByFurlough(UUID uuid, RegionFurlough regionFurlough){
         List<Zone> zones = new ArrayList<>();
 
         Zone.ZONE_LIST.forEach(e -> {
@@ -164,9 +164,13 @@ public class Zone extends RegionWithPlayer{
         Zone.HASH_TABLE.put(index, zones);
     }
 
-    public static int getHash(double x){
+    private static int getHash(double x){
         int index = ((int) (x / 383)) % 13 ;
         return index;
+    }
+
+    public static int getHash(Zone zone){
+        return getHash(zone.getRectangle().getX());
     }
 
     public static List<Zone> getZoneByCords(Location location){

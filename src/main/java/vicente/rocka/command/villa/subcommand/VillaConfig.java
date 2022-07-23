@@ -140,7 +140,7 @@ public class VillaConfig implements SubCommand {
             if(regionFurlough.equals(RegionFurlough.Owner) && value.equalsIgnoreCase("true")){
 
                 int max_villa_per_player = Region.plugin.getConfig().getInt("villa_specification.max_villa_per_player");
-                int count_villa_player = Zone.numberZoneFurloughPlayer(target.getUniqueId(), RegionFurlough.Owner);
+                int count_villa_player = Zone.getNumberZoneFurloughPlayer(target.getUniqueId(), RegionFurlough.Owner);
 
                 Set<String> specification_by_perm = Region.plugin.getConfig().getConfigurationSection("villa_specification.specification_by_perm").getKeys(false);
 

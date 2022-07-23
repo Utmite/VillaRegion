@@ -46,7 +46,7 @@ public class VillaDelete implements SubCommand {
         }
 
         Player player = (Player) sender;
-        List<Zone> zones = Zone.getZonePlayerFurlough(player.getUniqueId(), RegionFurlough.Owner);
+        List<Zone> zones = Zone.getZonePlayerByFurlough(player.getUniqueId(), RegionFurlough.Owner);
 
         if(args.length != 2){
             BaseComponent[] component = new ComponentBuilder(this.getSyn()).append("!").color(ChatColor.RED).create();
@@ -89,7 +89,7 @@ public class VillaDelete implements SubCommand {
         Player player = (Player) sender;
         switch (args.length){
             case 2:
-                Zone.getZonePlayerFurlough(player.getUniqueId(), RegionFurlough.Owner)
+                Zone.getZonePlayerByFurlough(player.getUniqueId(), RegionFurlough.Owner)
                         .stream()
                         .map(e -> e.getName())
                         .filter(e -> e.toUpperCase().startsWith(args[1].toUpperCase()))

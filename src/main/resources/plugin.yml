@@ -12,3 +12,7 @@ commands:
     permission: villaregion.commands.vregion
   villa:
     description: A command for create villas
+  vendo:
+    description: A command for sell items
+  compro:
+    description: A commnad for buy items

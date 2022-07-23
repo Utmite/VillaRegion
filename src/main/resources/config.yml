@@ -110,3 +110,10 @@ tab:
     - villa
     - tps
     - tpa
+    - vendo
+    - compro
+shop:
+  error:
+    not_item_hand: "No tienes un item en la mano"
+    not_is_int: "El precio debe ser un numero"
+    not_safe_number: "El precio maximo es de 4159"

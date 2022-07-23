@@ -24,13 +24,17 @@ public class JSONFile {
     private static void createJSONFile(String name) {
         File file = new File(plugin.getDataFolder(),name+".json");
 
-        if(file.exists()) return;
+        if(file.exists()) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"[VillageRegion] "+name+".json loading...");
+            return;
+        }
 
         JSONArray myObj = new JSONArray();
 
         try(FileWriter fileCreation = new FileWriter(plugin.getDataFolder().getPath()+"/"+name+".json")) {
 
             fileCreation.write(myObj.toString());
+            Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW+"[VillageRegion / INFO] "+name+".json has created");
 
         } catch (IOException e) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"[VillageRegion / ERROR] The plugin cannot create "+name+".json file");
