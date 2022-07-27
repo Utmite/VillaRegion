@@ -22,6 +22,7 @@ public enum RegionFlag {
     Use_Bed,
     Is_Village_Zone,
 
+    Use_villagers,
     Title_Text;
 
     final public Object getType(){

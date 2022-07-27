@@ -163,20 +163,22 @@ public class RegionEvents implements Listener {
         Player player = asyncPlayerChatEvent.getPlayer();
         String message = asyncPlayerChatEvent.getMessage();
         List<Zone> zones = LAST_ZONES.get(player);
+
+        if(zones == null) return;
+
         Set<Player> recipients = asyncPlayerChatEvent.getRecipients();
 
         if(zones.isEmpty()) return;
-        if(message.startsWith("!")) return;
+        if(!message.startsWith("w")) return;
 
         recipients.clear();
         Zone zone = zones.get(0);
 
         asyncPlayerChatEvent.setFormat(ChatColor.translateAlternateColorCodes('&',"&b["+ zone.getName()+"&b]"+ " &7<"+player.getName()+"> &f"+message));
 
-        for(Player target : LAST_ZONES.keySet()){
-            List<Zone> target_zone = LAST_ZONES.get(target);
-            if(target_zone.contains(zone)) recipients.add(target);
-        }
+        LAST_ZONES.forEach((target, target_last_zone) -> {
+            if(target_last_zone.contains(zone)) recipients.add(target);
+        });
 
     }
 
