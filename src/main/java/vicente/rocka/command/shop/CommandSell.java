@@ -75,6 +75,11 @@ public class CommandSell implements TabExecutor {
 
         ItemStack itemStack = inventory.getItemInMainHand();
 
+        if(itemStack.getType().equals(Material.GOLD_NUGGET) && (itemStack.getItemMeta().getCustomModelData() == 7007447 || itemStack.getItemMeta().getCustomModelData() == 7007449)){
+            player.kickPlayer("Trabaja WEON!");
+            return false;
+        }
+
         PlayerSellItem playerSellItem = new PlayerSellItem(player, itemStack, Integer.valueOf(args[0]));
         Bukkit.getServer().getPluginManager().callEvent(playerSellItem);
 

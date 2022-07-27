@@ -34,9 +34,6 @@ public class CommandBuy implements TabExecutor {
         Merchant merchant = Bukkit.createMerchant("Comerciante proletario");
         Player player = (Player) sender;
 
-        merchantRecipes.add(getBankNote());
-        aux_merchantRecipes.add(getBankNote());
-
         for (Object object : VillaRegion.SHOP.getJson()) {
             if (!(object instanceof JSONObject)) continue;
 
@@ -76,25 +73,6 @@ public class CommandBuy implements TabExecutor {
         return intgetPrice(price, recipe);
     }
 
-    private MerchantRecipe getBankNote(){
-        ItemStack bankNote = new ItemStack(Material.GOLD_NUGGET, 1);
-
-        ItemMeta bankNoteMeta = bankNote.getItemMeta();
-        bankNoteMeta.setCustomModelData(7007449);
-        bankNote.setItemMeta(bankNoteMeta);
-
-        MerchantRecipe bankNoteRecipe = new MerchantRecipe(bankNote, 99);
-
-        ItemStack coin = new ItemStack(Material.GOLD_NUGGET, 64);
-
-        ItemMeta coinMeta = coin.getItemMeta();
-        coinMeta.setCustomModelData(7007447);
-        coin.setItemMeta(coinMeta);
-
-        bankNoteRecipe.addIngredient(coin);
-
-        return bankNoteRecipe;
-    }
     private MerchantRecipe intgetPrice(int price, MerchantRecipe recipe){
 
             int mainPrice = price / 64;
