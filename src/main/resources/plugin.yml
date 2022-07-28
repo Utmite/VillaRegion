@@ -10,6 +10,9 @@ commands:
     aliases:
       - vrg
     permission: villaregion.commands.vregion
+  vshop:
+    description: A command for edit shop
+    permission: villaregion.commands.vshop
   villa:
     description: A command for create villas
   vendo:

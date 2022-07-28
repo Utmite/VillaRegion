@@ -1,4 +1,4 @@
-package vicente.rocka.util;
+package vicente.rocka.util.JSON;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

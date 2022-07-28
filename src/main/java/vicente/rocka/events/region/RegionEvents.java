@@ -177,7 +177,7 @@ public class RegionEvents implements Listener {
 
         if(zones == null) return;
         if(zones.isEmpty()) return;
-        if(message.startsWith("!")) return;
+        if(!message.startsWith("w")) return;
 
         recipients.clear();
         Zone zone = zones.get(0);

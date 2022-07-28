@@ -7,13 +7,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import vicente.rocka.command.shop.CommandBuy;
 import vicente.rocka.command.shop.CommandSell;
+import vicente.rocka.command.shop.CommandVShop;
 import vicente.rocka.command.villa.CommandVilla;
 import vicente.rocka.command.vregion.CommandVregion;
 import vicente.rocka.events.region.RegionEvents;
 import vicente.rocka.events.shop.ShopEvents;
 import vicente.rocka.region.Region;
 import vicente.rocka.region.Zone;
-import vicente.rocka.util.JSONFile;
+import vicente.rocka.util.JSON.JSONFile;
 
 import java.io.File;
 
@@ -41,6 +42,7 @@ public final class VillaRegion extends JavaPlugin {
         this.getCommand("villa").setExecutor(new CommandVilla());
         this.getCommand("vendo").setExecutor(new CommandSell());
         this.getCommand("compro").setExecutor(new CommandBuy());
+        this.getCommand("vshop").setExecutor(new CommandVShop());
     }
 
     public void registerEvents(){

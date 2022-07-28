@@ -1,7 +1,5 @@
-package vicente.rocka.util;
+package vicente.rocka.util.JSON;
 
-import org.json.JSONObject;
-import org.json.JSONStringer;
 import vicente.rocka.villaregion.VillaRegion;
 import net.md_5.bungee.api.ChatColor;
 

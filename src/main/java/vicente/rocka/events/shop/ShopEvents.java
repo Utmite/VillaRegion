@@ -13,11 +13,10 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import vicente.rocka.command.shop.CommandBuy;
 import vicente.rocka.events.custom.PlayerCloseMerchantEvent;
 import vicente.rocka.events.custom.PlayerSellItem;
-import vicente.rocka.events.custom.VillagerSellEvent;
-import vicente.rocka.region.Region;
+import vicente.rocka.util.JSON.ItemJSON;
+import vicente.rocka.util.shop.Shop;
 import vicente.rocka.villaregion.VillaRegion;
 
 import java.util.*;
@@ -53,8 +52,9 @@ public class ShopEvents implements Listener {
 
                 if (auxrecipe.getUses() != recipe.getUses() && !go) {
                     go = true;
-                    VillagerSellEvent villagerSellEvent = new VillagerSellEvent((Player) merchant.getTrader(), merchant, recipe);
-                    Bukkit.getServer().getPluginManager().callEvent(villagerSellEvent);
+
+                    VillagerSellEvent((Player) merchant.getTrader(), merchant, recipe);
+
                 }
 
                 index.addAndGet(1);
@@ -68,11 +68,12 @@ public class ShopEvents implements Listener {
 
             for(Player p : playerInShop){
                 p.closeInventory();
-                p.chat("/compro");
+                p.openMerchant(Shop.createMerchant(), true);
             }
 
             playerInShop.clear();
         }
+
 
     }
 
@@ -94,20 +95,20 @@ public class ShopEvents implements Listener {
 
     }
 
+    private static void VillagerSellEvent(Player player, Merchant merchant, MerchantRecipe merchantRecipe){
 
-    @EventHandler
-    public void VillagerSellEvent(VillagerSellEvent villagerSellEvent){
+        if(!go) return;
 
-        ItemStack itemSell = villagerSellEvent.getMerchantRecipe().getResult();
+        ItemStack itemSell = merchantRecipe.getResult();
 
         if(!itemExitsInJSON(itemSell)){
-            villagerSellEvent.getPlayer().getInventory().remove(itemSell);
+            player.getInventory().remove(itemSell);
+            return;
         }
 
-        JSONObject itemJSON = this.removeItem(itemSell);
+        JSONObject itemJSON = removeItem(itemSell);
 
         if(itemJSON != null) giveMoney(itemJSON);
-
     }
 
     @EventHandler
@@ -145,7 +146,9 @@ public class ShopEvents implements Listener {
 
         for(Player p : playersInShop){
             p.closeInventory();
-            p.chat("/compro");
+            Shop.createMerchant();
+            p.openMerchant(Shop.createMerchant(), true);
+
         }
 
         playersInShop.clear();
@@ -154,8 +157,7 @@ public class ShopEvents implements Listener {
     private void addItemShop(Player player, ItemStack itemSell, Integer price){
         JSONObject jsonObject = new JSONObject();
 
-        JSONObject itemJSON = new JSONObject(itemSell.serialize());
-        itemJSON.put("meta", itemSell.getItemMeta().serialize());
+        JSONObject itemJSON = ItemJSON.itemStackToJSON(itemSell);
 
         jsonObject.put("item", itemJSON);
         jsonObject.put("price", price);
@@ -166,42 +168,28 @@ public class ShopEvents implements Listener {
         VillaRegion.SHOP.saveJson();
     }
 
-    private static boolean equals(JSONObject o, JSONObject b){
-        JSONObject obj = (JSONObject) o;
+    private static boolean itemExitsInJSON(ItemStack itemSell){
 
-
-        if(!obj.keySet().equals(b.keySet())) return false;
-
-        for(String key : obj.keySet()){
-
-            if(!obj.get(key).toString().equals(b.get(key).toString())) return false;
-        }
-
-        return true;
-    }
-
-    private boolean itemExitsInJSON(ItemStack itemSell){
-
-        JSONObject itemJSON = new JSONObject(itemSell.serialize());
-        itemJSON.put("meta", itemSell.getItemMeta().serialize());
+        JSONObject itemJSON = ItemJSON.itemStackToJSON(itemSell);
 
         for(int i = 0; i < VillaRegion.SHOP.getJson().length(); i++){
             JSONObject jsonObject = ((JSONObject) VillaRegion.SHOP.getJson().get(i)).getJSONObject("item");
 
-            if(equals(jsonObject, itemJSON)) return true;
+            if(jsonObject.similar(itemJSON)){
+                return true;
+            }
         }
 
         return false;
     }
 
-    private JSONObject removeItem(ItemStack itemSell) {
-        JSONObject itemJSON = new JSONObject(itemSell.serialize());
-        itemJSON.put("meta", itemSell.getItemMeta().serialize());
+    private static JSONObject removeItem(ItemStack itemSell) {
+        JSONObject itemJSON = ItemJSON.itemStackToJSON(itemSell);
 
         for (int i = 0; i < VillaRegion.SHOP.getJson().length(); i++) {
             JSONObject jsonObject = ((JSONObject) VillaRegion.SHOP.getJson().get(i)).getJSONObject("item");
 
-            if (equals(jsonObject, itemJSON)){
+            if (itemJSON.similar(jsonObject)){
                 jsonObject = VillaRegion.SHOP.getJson().getJSONObject(i);
                 VillaRegion.SHOP.getJson().remove(i);
                 VillaRegion.SHOP.saveJson();
@@ -211,7 +199,7 @@ public class ShopEvents implements Listener {
         return null;
     }
 
-    private void giveMoney(JSONObject itemJSON){
+    private static void giveMoney(JSONObject itemJSON){
         if(Bukkit.getPlayer(UUID.fromString(itemJSON.getString("player_UUID"))) == null){
             JSONObject bank = new JSONObject();
             bank.put("UUID", itemJSON.getString("player_UUID"));
