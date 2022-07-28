@@ -46,19 +46,7 @@ public class ItemJSON {
         ConfigurationSerializable meta = ConfigurationSerialization.deserializeObject(map_meta_item);
         ItemStack item = ItemStack.deserialize(map_item);
 
-        if (meta instanceof SkullMeta) {
-
-            item.setItemMeta((SkullMeta) meta);
-
-        } else if (meta instanceof BlockStateMeta) {
-
-            item.setItemMeta((BlockStateMeta) meta);
-
-        } else {
-
-            item.setItemMeta((ItemMeta) meta);
-
-        }
+        item.setItemMeta((ItemMeta) meta);
 
         return item;
     }

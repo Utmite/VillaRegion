@@ -56,7 +56,6 @@ public class ShopEvents implements Listener {
                     VillagerSellEvent((Player) merchant.getTrader(), merchant, recipe);
 
                 }
-
                 index.addAndGet(1);
 
             });
@@ -200,44 +199,35 @@ public class ShopEvents implements Listener {
     }
 
     private static void giveMoney(JSONObject itemJSON){
+
         if(Bukkit.getPlayer(UUID.fromString(itemJSON.getString("player_UUID"))) == null){
             JSONObject bank = new JSONObject();
             bank.put("UUID", itemJSON.getString("player_UUID"));
             bank.put("price", itemJSON.getInt("price"));
             VillaRegion.BANK.getJson().put(bank);
             VillaRegion.BANK.saveJson();
-        }else {
-
-            Player player = Bukkit.getPlayer(UUID.fromString(itemJSON.getString("player_UUID")));
-
-            int price = itemJSON.getInt("price");
-
-            int mainPrice = price / 64;
-            int r = price % 64;
-
-            if(mainPrice != 0) {
-                ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
-
-                ItemMeta itemMeta = notebank.getItemMeta();
-                itemMeta.setCustomModelData(7007449);
-                notebank.setItemMeta(itemMeta);
-
-                player.getWorld().dropItem(player.getLocation(),notebank);
-            }
-
-            ItemStack coin = new ItemStack(Material.GOLD_NUGGET, r);
-
-            ItemMeta coinMeta = coin.getItemMeta();
-            coinMeta.setCustomModelData(7007447);
-            coin.setItemMeta(coinMeta);
-
-
-            player.getWorld().dropItem(player.getLocation(),coin);
+            return;
         }
 
-        VillaRegion.SHOP.saveJson();
+        dropMoney(itemJSON);
+
     }
 
+    private static void dropMoney(JSONObject itemJSON){
+        Player player = Bukkit.getPlayer(UUID.fromString(itemJSON.getString("player_UUID")));
+
+        int price = itemJSON.getInt("price");
+
+        int[] finalPrice = Shop.getPrice(price);
+
+        if(finalPrice[0] != 0) {
+            ItemStack notebank = Shop.getNotebank(finalPrice[0]);
+            player.getWorld().dropItem(player.getLocation(),notebank);
+        }
+
+        ItemStack coin = Shop.getCoin(finalPrice[1]);
+        player.getWorld().dropItem(player.getLocation(),coin);
+    }
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent playerJoinEvent){
         Player player = playerJoinEvent.getPlayer();
@@ -248,6 +238,7 @@ public class ShopEvents implements Listener {
             if(!(obj instanceof JSONObject)) continue;
 
             JSONObject itemSell = (JSONObject) obj;
+
             UUID playerUUID = UUID.fromString(itemSell.getString("UUID"));
 
             if(!player.getUniqueId().equals(playerUUID)) continue;
@@ -255,29 +246,7 @@ public class ShopEvents implements Listener {
             VillaRegion.BANK.getJson().remove(index);
             VillaRegion.BANK.saveJson();
 
-            int price = itemSell.getInt("price");
-
-            int mainPrice = price / 64;
-            int r = price % 64;
-
-            if(mainPrice != 0) {
-                ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
-
-                ItemMeta itemMeta = notebank.getItemMeta();
-                itemMeta.setCustomModelData(7007449);
-                notebank.setItemMeta(itemMeta);
-
-                player.getWorld().dropItem(player.getLocation(),notebank);
-            }
-
-            ItemStack coin = new ItemStack(Material.GOLD_NUGGET, r);
-
-            ItemMeta coinMeta = coin.getItemMeta();
-            coinMeta.setCustomModelData(7007447);
-            coin.setItemMeta(coinMeta);
-
-
-            player.getWorld().dropItem(player.getLocation(),coin);
+            dropMoney(itemSell);
 
             index+=1;
         }

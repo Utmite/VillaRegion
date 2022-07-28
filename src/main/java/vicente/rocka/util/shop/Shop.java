@@ -2,7 +2,6 @@ package vicente.rocka.util.shop;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
@@ -44,17 +43,24 @@ public class Shop {
 
         MerchantRecipe recipe = new MerchantRecipe(result, 1);
 
-
-        return intgetPrice(price, recipe);
+        final int[] finalPrice = Shop.getPrice(price);
+        
+        recipe = Shop.setPriceVillager(recipe, finalPrice[0], finalPrice[1]);
+        
+        return recipe;
     }
-
-    private static MerchantRecipe intgetPrice(int price, MerchantRecipe recipe){
-
-        int mainPrice = price / 64;
-        int r = price % 64;
-
-        if(mainPrice != 0) {
-            ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, mainPrice);
+    
+    private static int mainPrice(int price){
+        return price / 64;
+    }
+    
+    private static int secondaryPrice(int price){
+        return price % 64;
+    }
+    
+    public static MerchantRecipe setPriceVillager(MerchantRecipe recipe, int main, int secondary){
+        if(main != 0){
+            ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, main);
 
             ItemMeta itemMeta = notebank.getItemMeta();
             itemMeta.setCustomModelData(7007449);
@@ -62,7 +68,8 @@ public class Shop {
 
             recipe.addIngredient(notebank);
         }
-        ItemStack coin = new ItemStack(Material.GOLD_NUGGET, r);
+
+        ItemStack coin = new ItemStack(Material.GOLD_NUGGET, secondary);
 
         ItemMeta coinMeta = coin.getItemMeta();
         coinMeta.setCustomModelData(7007447);
@@ -70,7 +77,31 @@ public class Shop {
 
 
         recipe.addIngredient(coin);
-
+        
         return recipe;
+    }
+    
+    public static int[] getPrice(int price){
+        return new int[]{mainPrice(price), secondaryPrice(price)};
+    }
+    
+    public static ItemStack getNotebank(int amount){
+        ItemStack notebank = new ItemStack(Material.GOLD_NUGGET, amount);
+
+        ItemMeta itemMeta = notebank.getItemMeta();
+        itemMeta.setCustomModelData(7007449);
+        notebank.setItemMeta(itemMeta);
+        
+        return notebank;
+    }
+
+    public static ItemStack getCoin(int amount){
+        ItemStack coin = new ItemStack(Material.GOLD_NUGGET, amount);
+
+        ItemMeta itemMeta = coin.getItemMeta();
+        itemMeta.setCustomModelData(7007447);
+        coin.setItemMeta(itemMeta);
+
+        return coin;
     }
 }
