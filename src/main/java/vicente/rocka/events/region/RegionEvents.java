@@ -19,7 +19,9 @@ import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import vicente.rocka.events.custom.PlayerEnterZoneEvent;
 import vicente.rocka.events.custom.PlayerExitZoneEvent;
@@ -321,7 +323,7 @@ public class RegionEvents implements Listener {
         if(entity == null) return;
 
         if(entity.getType().equals(EntityType.VILLAGER)){
-            playerInteractAtEntityEvent.setCancelled(getCancelled(player, locationEntity, RegionFlag.Use_villagers));
+            playerInteractAtEntityEvent.setCancelled(getCancelled(player, locationEntity, RegionFlag.Use_villager));
             return;
         }
 
@@ -355,7 +357,7 @@ public class RegionEvents implements Listener {
         Player player = playerItemDamageEvent.getPlayer();
         Location location = player.getLocation();
 
-        playerItemDamageEvent.setCancelled(getGameRule(location, RegionFlag.Damage_items));
+        playerItemDamageEvent.setCancelled(getGameRule(location, RegionFlag.Damage_item));
     }
 
     @EventHandler
@@ -444,6 +446,12 @@ public class RegionEvents implements Listener {
     public void InventoryOpenEvent(InventoryOpenEvent inventoryOpenEvent){
         if(inventoryOpenEvent.getInventory().getLocation() == null) return;
 
+        if(inventoryOpenEvent.getInventory().getType().equals(InventoryType.MERCHANT)){
+            inventoryOpenEvent.setCancelled(
+                    getCancelled((Player) inventoryOpenEvent.getPlayer(), inventoryOpenEvent.getInventory().getLocation(), RegionFlag.Use_villager)
+            );
+            return;
+        }
         inventoryOpenEvent.setCancelled(
                 getCancelled((Player) inventoryOpenEvent.getPlayer(), inventoryOpenEvent.getInventory().getLocation(), RegionFlag.Interact)
         );
