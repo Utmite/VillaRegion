@@ -54,7 +54,4 @@ public class Flag {
         return this.flag;
     }
 
-    public boolean equalsNUllorFalse(String string){
-        return (string.equals("false") || string.equals("null"));
-    }
 }

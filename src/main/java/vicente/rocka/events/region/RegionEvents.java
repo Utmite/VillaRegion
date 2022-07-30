@@ -6,6 +6,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -18,9 +20,6 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.MerchantRecipe;
-import vicente.rocka.command.shop.CommandBuy;
 import vicente.rocka.events.custom.PlayerEnterZoneEvent;
 import vicente.rocka.events.custom.PlayerExitZoneEvent;
 import vicente.rocka.events.custom.VillagerSellEvent;
@@ -173,6 +172,9 @@ public class RegionEvents implements Listener {
         Player player = asyncPlayerChatEvent.getPlayer();
         String message = asyncPlayerChatEvent.getMessage();
         List<Zone> zones = LAST_ZONES.get(player);
+
+        if(zones == null) return;
+
         Set<Player> recipients = asyncPlayerChatEvent.getRecipients();
 
         if(zones == null) return;
@@ -184,10 +186,9 @@ public class RegionEvents implements Listener {
 
         asyncPlayerChatEvent.setFormat(ChatColor.translateAlternateColorCodes('&',"&b["+ zone.getName()+"&b]"+ " &7<"+player.getName()+"> &f"+message));
 
-        for(Player target : LAST_ZONES.keySet()){
-            List<Zone> target_zone = LAST_ZONES.get(target);
-            if(target_zone.contains(zone)) recipients.add(target);
-        }
+        LAST_ZONES.forEach((target, target_last_zone) -> {
+            if(target_last_zone.contains(zone)) recipients.add(target);
+        });
 
     }
 
@@ -312,6 +313,23 @@ public class RegionEvents implements Listener {
     }
 
     @EventHandler
+    public void PlayerInteractAtEntityEvent(PlayerInteractAtEntityEvent playerInteractAtEntityEvent){
+        Player player = playerInteractAtEntityEvent.getPlayer();
+        Entity entity = playerInteractAtEntityEvent.getRightClicked();
+        Location locationEntity = entity.getLocation();
+
+        if(entity == null) return;
+
+        if(entity.getType().equals(EntityType.VILLAGER)){
+            playerInteractAtEntityEvent.setCancelled(getCancelled(player, locationEntity, RegionFlag.Use_villagers));
+            return;
+        }
+
+        playerInteractAtEntityEvent.setCancelled(getCancelled(player, locationEntity, RegionFlag.Interact));
+    }
+
+
+    @EventHandler
     public void EntityDamageByEntityEvent(EntityDamageByEntityEvent entityDamageByEntityEvent){
         if(!(entityDamageByEntityEvent.getDamager() instanceof Player || entityDamageByEntityEvent.getDamager() instanceof Projectile)) return;
 
@@ -325,6 +343,19 @@ public class RegionEvents implements Listener {
             return;
         }
 
+    }
+
+    @EventHandler
+    public void PlayerItemDamageEvent(PlayerItemDamageEvent playerItemDamageEvent){
+
+        if(playerItemDamageEvent.getDamage() == 0) return;
+        if(playerItemDamageEvent.getItem() == null) return;
+
+        ItemStack item = playerItemDamageEvent.getItem();
+        Player player = playerItemDamageEvent.getPlayer();
+        Location location = player.getLocation();
+
+        playerItemDamageEvent.setCancelled(getGameRule(location, RegionFlag.Damage_items));
     }
 
     @EventHandler
