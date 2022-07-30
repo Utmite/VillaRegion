@@ -56,59 +56,41 @@ public class VregionCreate implements SubCommand {
     public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
         List<String> subArguments = new ArrayList<>();
 
-        if(sender instanceof Player){
-            Player player = (Player) sender;
+        if(sender instanceof Player player){
             Location location = player.getLocation();
-            switch (args.length){
-                case 2:
+            switch (args.length) {
+                case 2 -> {
                     subArguments.add("<radio>");
-                    subArguments.add((int) location.getX()+"");
-                    break;
-                case 3:
+                    subArguments.add((int) location.getX() + "");
+                }
+                case 3 -> {
                     subArguments.add("<name>");
-                    subArguments.add((int) location.getY()+"");
-                    break;
-                case 4:
-                    subArguments.add((int) location.getZ()+"");
-                    break;
-                case 5:
-                    subArguments.add((int) location.getX()+"");
-                    break;
-                case 6:
-                    subArguments.add((int) location.getY()+"");
-                    break;
-                case 7:
-                    subArguments.clear();
-                    subArguments.add((int) location.getZ()+"");
-                    break;
-                case 8:
-                    subArguments.clear();
-                    subArguments.add("<name>");
-                    break;
+                    subArguments.add((int) location.getY() + "");
+                }
+                case 4, 7 -> subArguments.add((int) location.getZ() + "");
+                case 5 -> subArguments.add((int) location.getX() + "");
+                case 6 -> subArguments.add((int) location.getY() + "");
+
+                case 8 -> subArguments.add("<name>");
             }
         }else{
             switch (args.length){
                 case 2:
                 case 5:
-                    subArguments.clear();
                     subArguments.add("x");
                     break;
                 case 3:
                 case 6:
-                    subArguments.clear();
                     subArguments.add("y");
                     break;
                 case 4:
                 case 7:
-                    subArguments.clear();
                     subArguments.add("z");
                     break;
                 case 9:
-                    subArguments.clear();
                     subArguments.add("<name>");
                     break;
                 case 8:
-                    subArguments.clear();
                     for (World world : Region.plugin.getServer().getWorlds()){
                         subArguments.add(world.getName());
                     }
@@ -122,7 +104,7 @@ public class VregionCreate implements SubCommand {
 
         if(!Util.isInt(args[1])) {player.sendMessage(ChatColor.YELLOW+"<r> must be a INT"); return;}
 
-        int radio = Integer.valueOf(args[1]);
+        int radio = Integer.parseInt(args[1]);
         String name = args[2];
 
         if(radio <= 0) {player.sendMessage(ChatColor.RED+"The radio must be positive"); return;}
@@ -145,7 +127,7 @@ public class VregionCreate implements SubCommand {
         zone.saveZone();
 
     }
-    private void performPlayer8arg(Player player, String args[]){
+    private void performPlayer8arg(Player player, String[] args){
         if(!Util.isInt(args[1])){player.sendMessage(ChatColor.YELLOW+"<x1> must be a INT"); return;}
         if(!Util.isInt(args[2])){player.sendMessage(ChatColor.YELLOW+"<y1> must be a INT"); return;}
         if(!Util.isInt(args[3])){player.sendMessage(ChatColor.YELLOW+"<z1> must be a INT"); return;}
@@ -162,8 +144,8 @@ public class VregionCreate implements SubCommand {
 
         Zone zone = new Zone(
                 this.doRectangle(args),
-                Integer.valueOf(args[2]),
-                Integer.valueOf(args[5]),
+                Integer.parseInt(args[2]),
+                Integer.parseInt(args[5]),
                 player.getWorld(),
                 name,
                 new Flag(),
@@ -174,7 +156,7 @@ public class VregionCreate implements SubCommand {
         zone.saveZone();
     }
 
-    private void performConsole9arg(CommandSender sender, String args[]){
+    private void performConsole9arg(CommandSender sender, String[] args){
         if(!Util.isInt(args[1])){sender.sendMessage(ChatColor.YELLOW+"<x1> must be a INT"); return;}
         if(!Util.isInt(args[2])){sender.sendMessage(ChatColor.YELLOW+"<y1> must be a INT"); return;}
         if(!Util.isInt(args[3])){sender.sendMessage(ChatColor.YELLOW+"<z1> must be a INT"); return;}
@@ -190,8 +172,8 @@ public class VregionCreate implements SubCommand {
 
         Zone zone = new Zone(
                 this.doRectangle(args),
-                Integer.valueOf(args[2]),
-                Integer.valueOf(args[5]),
+                Integer.parseInt(args[2]),
+                Integer.parseInt(args[5]),
                 world,
                 name,
                 new Flag(),
@@ -202,24 +184,60 @@ public class VregionCreate implements SubCommand {
         zone.saveZone();
     }
     private Rectangle doRectangle(String[] args){
-        return new Rectangle((int) Util.getPoints((int) Integer.valueOf(args[1]),(int) Integer.valueOf(args[2]),(int) Integer.valueOf(args[3]),
-                (int) Integer.valueOf(args[4]),(int) Integer.valueOf(args[5]),(int) Integer.valueOf(args[6]))[0],
-
-                (int) Util.getPoints((int) Integer.valueOf(args[1]),(int) Integer.valueOf(args[2]),(int) Integer.valueOf(args[3]),
-                        (int) Integer.valueOf(args[4]),(int) Integer.valueOf(args[5]),(int) Integer.valueOf(args[6]))[2],
+        return new Rectangle(
+                Util.getPoints(
+                        Integer.parseInt(args[1]),
+                        Integer.parseInt(args[2]),
+                        Integer.parseInt(args[3]),
+                        Integer.parseInt(args[4]),
+                        Integer.parseInt(args[5]),
+                        Integer.parseInt(args[6])
+                )[0],
+                Util.getPoints(
+                        Integer.parseInt(args[1]),
+                        Integer.parseInt(args[2]),
+                        Integer.parseInt(args[3]),
+                        Integer.parseInt(args[4]),
+                        Integer.parseInt(args[5]),
+                        Integer.parseInt(args[6])
+                )[2],
 
                 (int) Util.distaciaEntreDosPuntos(
-
-                        (int) Util.getPoints((int) Integer.valueOf(args[1]),(int) Integer.valueOf(args[2]),(int) Integer.valueOf(args[3]),
-                                (int) Integer.valueOf(args[4]),(int) Integer.valueOf(args[5]),(int) Integer.valueOf(args[6]))[0], 1,
-
-                        (int) Util.getPoints((int) Integer.valueOf(args[1]),(int) Integer.valueOf(args[2]),(int) Integer.valueOf(args[3]),
-                                (int) Integer.valueOf(args[4]),(int) Integer.valueOf(args[5]),(int) Integer.valueOf(args[6]))[3], 1),
+                        Util.getPoints(
+                                Integer.parseInt(args[1]),
+                                Integer.parseInt(args[2]),
+                                Integer.parseInt(args[3]),
+                                Integer.parseInt(args[4]),
+                                Integer.parseInt(args[5]),
+                                Integer.parseInt(args[6])
+                        )[0], 1,
+                        Util.getPoints(
+                                Integer.parseInt(args[1]),
+                                Integer.parseInt(args[2]),
+                                Integer.parseInt(args[3]),
+                                Integer.parseInt(args[4]),
+                                Integer.parseInt(args[5]),
+                                Integer.parseInt(args[6])
+                        )[3], 1),
 
                 (int) Util.distaciaEntreDosPuntos(
-                        1, (int) Util.getPoints((int) Integer.valueOf(args[1]),(int) Integer.valueOf(args[2]),(int) Integer.valueOf(args[3]),
-                                (int) Integer.valueOf(args[4]),(int) Integer.valueOf(args[5]),(int) Integer.valueOf(args[6]))[2],
-                        1, (int) Util.getPoints((int) Integer.valueOf(args[1]),(int) Integer.valueOf(args[2]),(int) Integer.valueOf(args[3]),
-                                (int) Integer.valueOf(args[4]),(int) Integer.valueOf(args[5]),(int) Integer.valueOf(args[6]))[5]));
+                        1,
+                        Util.getPoints(
+                                Integer.parseInt(args[1]),
+                                Integer.parseInt(args[2]),
+                                Integer.parseInt(args[3]),
+                                Integer.parseInt(args[4]),
+                                Integer.parseInt(args[5]),
+                                Integer.parseInt(args[6])
+                        )[2],
+                        1,
+                        Util.getPoints(
+                                Integer.parseInt(args[1]),
+                                Integer.parseInt(args[2]),
+                                Integer.parseInt(args[3]),
+                                Integer.parseInt(args[4]),
+                                Integer.parseInt(args[5]),
+                                Integer.parseInt(args[6])
+                        )[5]));
     }
 }
