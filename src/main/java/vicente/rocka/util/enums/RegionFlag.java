@@ -21,9 +21,7 @@ public enum RegionFlag {
     Bucket(true),
     Use_Bed(true),
     Is_Village_Zone(true),
-
     Use_villagers(true),
-
     Damage_items(true),
     Title_Text("");
 
